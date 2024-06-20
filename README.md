@@ -27,6 +27,26 @@ docker build -t anki/syncd:v24.06.2 .
 在 `.github/VERSION.txt` 中的版本号，GitHub Actions 会自动运行编译。
 
 
+## 部署项目
+
+```bash
+git clone https://github.com/kenyon-wong/anki-sync-server-docker.git --depth 1 anki-sync-server
+cd anki-sync-server
+
+# 编译镜像
+docker buildx build . --build-arg VERSION=24.06.2 --file Dockerfile --tag anki_syncd:v24.06.2
+# 或者
+docker pull gitea.online/anki/anki_syncd:v24.06.2
+
+```
+
+修改 envs 目录下的 users.env，设置自己的用户名和密码（可以按需设置多个，每行一对用户名和密码的对应键），修改完成之后再启动容器
+
+```bash
+docker-compose up -d
+```
+
+
 ## 参考资料
 
 - [3 分钟为英语学习神器 Anki 部署一个专属同步服务器](https://www.cnblogs.com/ryanyangcs/p/17508044.html)
