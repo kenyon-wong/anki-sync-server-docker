@@ -23,7 +23,7 @@ jobs:
       - name: Get Version
         id: get_version
         run: |
-          version=$(cat .github/VERSION.txt)
+          version=$(cat .github/VERSION.txt | tr -d '[:space:]')
           echo "VERSION=${version}" >> $GITHUB_ENV        
 
       # Build the Docker image
