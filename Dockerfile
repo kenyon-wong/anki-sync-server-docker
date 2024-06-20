@@ -3,18 +3,18 @@ FROM rust:1.75-alpine AS builder
 
 RUN set -aeux && apk add --no-cache binutils git musl-dev protobuf-dev
 
+ARG VERSION="24.06.2"
 RUN set -aeux \
-    && cargo install --git https://github.com/ankitects/anki.git --tag 24.06.2 anki-sync-server \
+    && cargo install --git https://github.com/ankitects/anki.git --tag "$VERSION" anki-sync-server \
     && rm -rf /tmp/cargo-install*
 
-# RUN set -aeux \
 RUN set -aeux \
     && mkdir /rootfs \
     && cp --parents $(which anki-sync-server) /rootfs/ \
     && cp --parents $(ldd "$(which anki-sync-server)" | awk '{if ( match($1,"/") ) {print $1}}') /rootfs/ \
     && strip $(find /rootfs/ -type f)
 
-FROM alpine:latest
+FROM alpine:3.20.0
 
 # Init system envs
 ENV \
@@ -27,7 +27,6 @@ ENV \
 WORKDIR /opt/anki.d
 
 # Set system environments
-# RUN set -aeux && sed -i "s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g" /etc/apk/repositories
 RUN set -aeux && apk add --no-cache ca-certificates tzdata
 
 # Set the Timezone
