@@ -1,11 +1,15 @@
-name: Docker Image CI
+name: Build anki-sync-server Images
 
 on:
   workflow_dispatch:
   push:
     branches: [ "master" ]
+    paths:
+      - ".github/VERSION.txt"
   pull_request:
     branches: [ "master" ]
+    paths:
+      - ".github/VERSION.txt"
 
 jobs:
   build:
@@ -15,16 +19,16 @@ jobs:
       # Checkout the repository
       - uses: actions/checkout@v4
 
-      # Extract the version from the Dockerfile
+      # Extract the version from .github/VERSION.txt
       - name: Get Version
         id: get_version
         run: |
-          version=$(awk '/cargo install/{print $7}' Dockerfile)
+          version=$(cat .github/VERSION.txt)
           echo "VERSION=${version}" >> $GITHUB_ENV        
 
       # Build the Docker image
       - name: Build the Docker image
-        run: docker buildx build . --file Dockerfile --tag anki_syncd:v${{ env.VERSION }}
+        run: docker buildx build . --build-arg VERSION=${{ env.VERSION }} --file Dockerfile --tag anki_syncd:v${{ env.VERSION }}
 
       # Save the Docker image to a tar file
       - name: Save Docker image
